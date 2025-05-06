@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy Monitoring System</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="main-container">
+    <header>
+      <h1>Energy Monitoring System</h1>
+    </header>
+
+    <div class="content">
+      <aside class="sidebar">
+        <h2>Solar Energy Production</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Solar Power Output</td>
+              <td id="solarPower">--</td>
+              <td>W</td>
+            </tr>
+            <tr>
+              <td>Total Solar Energy</td>
+              <td id="solarEnergy">--</td>
+              <td>kWh</td>
+            </tr>
+          </tbody>
+        </table>
+      </aside>
+
+      <main>
+        <section class="live-data">
+          <p><strong>Live Power Usage:</strong> <span id="power">--</span> W</p>
+          <p><strong>Total Energy Consumed:</strong> <span id="energy">--</span> kWh</p>
+        </section>
+
+        <section class="monitoring-table">
+          <h2>Metrics</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Unit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Power Factor</td>
+                <td id="powerFactor">--</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Voltage Phase A</td>
+                <td id="voltageA">--</td>
+                <td>V</td>
+              </tr>
+              <tr>
+                <td>Voltage Phase B</td>
+                <td id="voltageB">--</td>
+                <td>V</td>
+              </tr>
+              <tr>
+                <td>Total Harmonics</td>
+                <td id="harmonics">--</td>
+                <td>%</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="graph">
+          <h2>Usage Graph</h2>
+          <canvas id="usageGraph" width="600" height="400"></canvas>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/script.js"></script>
+</body>
+</html>

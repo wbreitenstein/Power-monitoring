@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy Monitoring System</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="main-container">
+    <header>
+      <h1>Energy Monitoring System</h1>
+      <form id="costForm">
+        <label for="costPerKwh">Cost per kWh ($):</label>
+        <input type="number" id="costPerKwh" step="0.01" value="0.12">
+        
+        <label for="deliveryCharge">Delivery Charge ($):</label>
+        <input type="number" id="deliveryCharge" step="0.01" value="10.00">
+        
+        <label for="systemCost">System Cost ($):</label>
+        <input type="number" id="systemCost" step="0.01" value="5000.00">
+        
+        <button type="button" onclick="updateCosts()">Update</button>
+      </form>
+    </header>
+
+    <div class="content">
+      <!-- Left Sidebar -->
+      <aside class="sidebar left-sidebar">
+        <h2>Solar Energy Production</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Solar Power Output</td>
+              <td id="solarPower">--</td>
+              <td>W</td>
+            </tr>
+            <tr>
+              <td>Total Solar Energy</td>
+              <td id="solarEnergy">--</td>
+              <td>kWh</td>
+            </tr>
+          </tbody>
+        </table>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <section class="monitoring-table">
+          <h2>Metrics</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Unit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Power Usage</td>
+                <td id="power">--</td>
+                <td>W</td>
+              </tr>
+              <tr>
+                <td>Total Energy Consumed</td>
+                <td id="energy">--</td>
+                <td>kWh</td>
+              </tr>
+              <tr>
+                <td>Frequency</td>
+                <td id="frequency">--</td>
+                <td>Hz</td>
+              </tr>
+              <tr>
+                <td>Power Factor</td>
+                <td id="powerFactor">--</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Voltage Phase A</td>
+                <td id="voltageA">--</td>
+                <td>V</td>
+              </tr>
+              <tr>
+                <td>Voltage Phase B</td>
+                <td id="voltageB">--</td>
+                <td>V</td>
+              </tr>
+              <tr>
+                <td>Total Harmonics</td>
+                <td id="harmonics">--</td>
+                <td>%</td>
+              </tr>
+              <tr>
+                <td>Break-Even Point</td>
+                <td id="breakEven">Calculating...</td>
+                <td>kWh</td>
+              </tr>
+              <tr>
+                <td>Lifetime Energy Production</td>
+                <td id="lifetimeEnergy">--</td>
+                <td>kWh</td>
+              </tr>
+              <tr>
+                <td>System Uptime</td>
+                <td id="uptime">--</td>
+                <td>hours</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="graph">
+          <h2>Usage Graph</h2>
+          <canvas id="usageGraph" width="600" height="400"></canvas>
+        </section>
+      </main>
+
+      <!-- Right Sidebar -->
+      <aside class="sidebar right-sidebar">
+        <h2>Battery Storage Bank</h2>
+        <label for="voltageSelect">Select Measurement:</label>
+        <select id="voltageSelect">
+          <option value="inputVoltage">Input Voltage</option>
+          <option value="outputVoltage">Output Voltage</option>
+        </select>
+        <p><strong>Selected Voltage:</strong> <span id="batteryVoltage">--</span> V</p>
+      </aside>
+
+      <!-- Rightmost Expandable Sidebar -->
+      <aside class="sidebar expandable-sidebar">
+        <h2>Query Log File</h2>
+        <label for="logMetricSelect">Select Metric:</label>
+        <select id="logMetricSelect" onchange="queryLogFile()">
+          <option value="power">Power Usage</option>
+          <option value="energy">Energy Consumed</option>
+          <option value="frequency">Frequency</option>
+          <option value="solarEnergy">Solar Energy</option>
+        </select>
+        <button onclick="queryLogFile()">Display for the Graph</button>
+        <button class="minimize-button" onclick="toggleSidebar()">−</button>
+      </aside>
+    </div>
+  </div>
+
+  <script src="../js/script.js"></script>
+</body>
+</html>

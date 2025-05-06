@@ -1,0 +1,98 @@
+#include <WiFi.h> // Include library for Wi-Fi
+#include <WebSocketServer.h> // Library for WebSocket server
+
+// Constants for Wi-Fi
+const char* ssid = netgearSenior;  // Replace with your network SSID
+const char* password = poiupoiupoiu1;  // Replace with your network password
+
+// WebSocket server instance
+WebSocketServer webSocket;
+
+// Variables for calculations
+float power = 0.0; // Watts
+float energy = 0.0; // kWh
+float frequency = 0.0; // Hz
+float voltageA = 0.0; // Phase A Voltage
+float voltageB = 0.0; // Phase B Voltage
+float solarPower = 0.0; // Solar power output
+float solarEnergy = 0.0; // Solar energy produced
+float inputVoltage = 0.0; // Battery input voltage
+float outputVoltage = 0.0; // Battery output voltage
+float powerFactor = 1.0; // Power factor
+float harmonics = 0.0; // Harmonics in percentage
+
+// Setup function
+void setup() {
+  Serial.begin(115200); // Begin serial communication
+  WiFi.begin(ssid, password); // Connect to Wi-Fi
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi!");
+  
+  // Start WebSocket server
+  webSocket.begin(80);
+  Serial.println("WebSocket server started!");
+
+  // Attach WebSocket message handling
+  webSocket.onMessage(onWebSocketMessage);
+}
+
+// WebSocket message handler
+void onWebSocketMessage(WebSocketServer &server, WebSocketClient &client, String message) {
+  if (message == "get_data") {
+    // Create JSON string with all metrics
+    String data = "{";
+    data += "\"power\":" + String(power) + ",";
+    data += "\"energy\":" + String(energy) + ",";
+    data += "\"frequency\":" + String(frequency) + ",";
+    data += "\"voltageA\":" + String(voltageA) + ",";
+    data += "\"voltageB\":" + String(voltageB) + ",";
+    data += "\"solarPower\":" + String(solarPower) + ",";
+    data += "\"solarEnergy\":" + String(solarEnergy) + ",";
+    data += "\"inputVoltage\":" + String(inputVoltage) + ",";
+    data += "\"outputVoltage\":" + String(outputVoltage) + ",";
+    data += "\"powerFactor\":" + String(powerFactor) + ",";
+    data += "\"harmonics\":" + String(harmonics);
+    data += "}";
+    client.send(data); // Send data via WebSocket
+  }
+}
+
+// Loop function
+void loop() {
+  webSocket.listen(); // Listen for WebSocket messages
+  
+  // Perform calculations here
+  // Example: Calculate power, energy, etc.
+  power = analogRead(A0) * 0.1; // Dummy calculation
+  energy += power / 3600.0; // Convert power to energy (kWh)
+  frequency = calculateFrequency(); // Call frequency calculation function
+  
+  // Simulate other metrics
+  voltageA = random(110, 120); // Simulate voltage for Phase A
+  voltageB = random(110, 120); // Simulate voltage for Phase B
+  solarPower = random(100, 500); // Simulate solar power
+  solarEnergy += solarPower / 3600.0; // Convert solar power to energy
+  inputVoltage = random(12, 15); // Simulate battery input voltage
+  outputVoltage = random(12, 15); // Simulate battery output voltage
+  powerFactor = 0.95; // Example constant power factor
+  harmonics = random(1, 10); // Simulate harmonics percentage
+  
+  delay(1000); // Update metrics every second
+}
+
+// Function to calculate frequency (example for AC signal)
+float calculateFrequency() {
+  unsigned long startTime = millis();
+  unsigned long cycleTime = 0;
+
+  while (analogRead(A1) < 512) {
+    cycleTime = millis() - startTime; // Time between zero crossings
+  }
+
+  return 1000.0 / cycleTime; // Convert milliseconds to frequency in Hz
+}

@@ -1,0 +1,23 @@
+.minimize-button {
+  display: inline-block;
+  background: #0078D4;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.minimize-button:hover {
+  background: #005a9e;
+}
+
+.expandable-sidebar {
+  width: 250px;
+  background: #e9f0f7;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: block;
+}

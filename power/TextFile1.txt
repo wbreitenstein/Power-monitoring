@@ -1,0 +1,114 @@
+#include <WiFiS3.h>
+// Constants for Wi-Fi
+const char* ssid = "netgearSenior";  // Replace with your network SSID
+const char* password = "poiupoiupoiu1";  // Replace with your network password
+
+// TCP server instance
+const int tcpPort = 8080;
+WiFiServer server(tcpPort);
+WiFiClient client;
+
+// Pin connections
+const int currentSensorPinA = A0; // Pin for current sensor A
+const int currentSensorPinB = A1; // Pin for current sensor B
+const int voltageSensorPin = A2; // Pin for voltage sensor
+
+// Variables for calculations
+float powerA = 0.0; // Power for phase A
+float powerB = 0.0; // Power for phase B
+float energyA = 0.0; // Energy for phase A
+float energyB = 0.0; // Energy for phase B
+float voltage = 0.0; // Voltage
+unsigned long lastUpdateMillis = 0; // Timer for regular updates
+
+void setup() {
+  Serial.begin(115200); // Begin serial communication
+  WiFi.begin(ssid, password); // Connect to Wi-Fi
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  Serial.print("Connected to WiFi! IP Address: ");
+  Serial.println(WiFi.localIP());
+
+  // Start TCP server
+  server.begin();
+  Serial.println("TCP server started on port " + String(tcpPort));
+}
+
+void loop() {
+  client = server.available();
+  if (client) {
+    String request = client.readStringUntil('\r');
+    Serial.println(request);
+    client.flush();
+
+    if (request.indexOf("get_data") != -1) {
+      String data = createJSONString();
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: application/json");
+      client.println("");
+      client.println(data);
+    }
+
+    delay(1);
+    client.stop();
+  }
+
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastUpdateMillis >= 1000) {
+    lastUpdateMillis = currentMillis;
+    updateMetrics();
+  }
+}
+
+String createJSONString() {
+  String data = "{";
+  data += "\"powerA\":" + String(powerA) + ",";
+  data += "\"powerB\":" + String(powerB) + ",";
+  data += "\"energyA\":" + String(energyA) + ",";
+  data += "\"energyB\":" + String(energyB) + ",";
+  data += "\"voltage\":" + String(voltage);
+  data += "}";
+  return data;
+}
+
+void updateMetrics() {
+  // Read current values from sensors
+  int currentValueA = analogRead(currentSensorPinA);
+  int currentValueB = analogRead(currentSensorPinB);
+  int voltageValue = analogRead(voltageSensorPin);
+
+  // Convert current values to amps
+  float currentA = convertCurrent(currentValueA);
+  float currentB = convertCurrent(currentValueB);
+
+  // Convert voltage value to volts
+  voltage = convertVoltage(voltageValue);
+
+  // Calculate power
+  powerA = voltage * currentA;
+  powerB = voltage * currentB;
+
+  // Calculate energy
+  energyA += powerA / 3600.0;
+  energyB += powerB / 3600.0;
+}
+
+float convertCurrent(int value) {
+  // Replace with your current conversion formula
+  return (value * 0.1) / 1000.0; // Example conversion
+}
+
+float convertVoltage(int value) {
+  // Replace with your voltage conversion formula
+  return (value * 0.1) * 11.0; // Example conversion for voltage divider
+}
+
+float calculateFrequency() {
+  // You can add frequency calculation logic here
+  return 50.0; // Default frequency
+}
